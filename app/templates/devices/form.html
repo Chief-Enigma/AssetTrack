@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% if device %}
+    {% set page_title = "Gerät bearbeiten" %}
+{% else %}
+    {% set page_title = "Gerät hinzufügen" %}
+{% endif %}
+
+
+{% block title %}
+{{ page_title }} | AssetTrack
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <a
+            href="{% if device %}{{ url_for('devices.detail', device_id=device.id) }}{% else %}{{ url_for('devices.index') }}{% endif %}"
+            class="back-link"
+        >
+            ← Zurück
+        </a>
+
+        <h1>{{ page_title }}</h1>
+
+        <p>
+            Stammdaten und aktuellen Status des Geräts erfassen.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="form-panel">
+
+    {% if not categories %}
+
+        <div class="notice">
+
+            <strong>Noch keine Kategorie vorhanden.</strong>
+
+            <p>
+                Bevor du ein Gerät erfassen kannst,
+                musst du mindestens eine Kategorie erstellen.
+            </p>
+
+            <a
+                href="{{ url_for('categories.index') }}"
+                class="button button-primary"
+            >
+                Kategorie erstellen
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <form
+            method="POST"
+            class="device-form"
+        >
+
+            <div class="form-section">
+
+                <div class="form-section-heading">
+
+                    <h2>Geräteinformationen</h2>
+
+                    <p>
+                        Grundlegende Informationen zur Identifikation.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Gerätename *
+                        </label>
+
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value="{{ request.form.get('name', device.name if device else '') }}"
+                            placeholder="z. B. MacBook Pro 14"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="serial_number">
+                            Seriennummer *
+                        </label>
+
+                        <input
+                            id="serial_number"
+                            name="serial_number"
+                            type="text"
+                            value="{{ request.form.get('serial_number', device.serial_number if device else '') }}"
+                            placeholder="z. B. SN-2026-001"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="category_id">
+                            Kategorie *
+                        </label>
+
+                        {% set current_category = request.form.get(
+                            'category_id',
+                            device.category_id|string if device else ''
+                        ) %}
+
+                        <select
+                            id="category_id"
+                            name="category_id"
+                            required
+                        >
+
+                            <option value="">
+                                Kategorie auswählen
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option
+                                    value="{{ category.id }}"
+                                    {% if current_category == category.id|string %}selected{% endif %}
+                                >
+                                    {{ category.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Standort *
+                        </label>
+
+                        <input
+                            id="location"
+                            name="location"
+                            type="text"
+                            value="{{ request.form.get('location', device.location if device else '') }}"
+                            placeholder="z. B. Büro Zürich"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="purchase_date">
+                            Kaufdatum
+                        </label>
+
+                        <input
+                            id="purchase_date"
+                            name="purchase_date"
+                            type="date"
+                            value="{{ request.form.get('purchase_date', device.purchase_date.isoformat() if device and device.purchase_date else '') }}"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="status">
+                            Status *
+                        </label>
+
+                        {% set current_status = request.form.get(
+                            'status',
+                            device.status if device else 'available'
+                        ) %}
+
+                        <select
+                            id="status"
+                            name="status"
+                            required
+                        >
+
+                            <option
+                                value="available"
+                                {% if current_status == "available" %}selected{% endif %}
+                            >
+                                Verfügbar
+                            </option>
+
+                            <option
+                                value="in_use"
+                                {% if current_status == "in_use" %}selected{% endif %}
+                            >
+                                In Benutzung
+                            </option>
+
+                            <option
+                                value="maintenance"
+                                {% if current_status == "maintenance" %}selected{% endif %}
+                            >
+                                Wartung
+                            </option>
+
+                            <option
+                                value="defective"
+                                {% if current_status == "defective" %}selected{% endif %}
+                            >
+                                Defekt
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% if device %}{{ url_for('devices.detail', device_id=device.id) }}{% else %}{{ url_for('devices.index') }}{% endif %}"
+                    class="button button-ghost"
+                >
+                    Abbrechen
+                </a>
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    {% if device %}
+                        Änderungen speichern
+                    {% else %}
+                        Gerät erstellen
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

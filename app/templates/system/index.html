@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}
+System | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>System</h1>
+
+        <p>
+            Demo-Daten und Datenbank für Testzwecke verwalten.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="stats-grid system-stats">
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Kategorien
+        </div>
+
+        <div class="stat-value">
+            {{ statistics.categories }}
+        </div>
+
+        <div class="stat-description">
+            Aktuell vorhanden
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Geräte
+        </div>
+
+        <div class="stat-value">
+            {{ statistics.devices }}
+        </div>
+
+        <div class="stat-description">
+            Aktuell vorhanden
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Wartungen
+        </div>
+
+        <div class="stat-value">
+            {{ statistics.maintenance }}
+        </div>
+
+        <div class="stat-description">
+            Aktuell vorhanden
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="system-grid">
+
+    <div class="panel system-card">
+
+        <div class="system-card-icon">
+            +
+        </div>
+
+        <h2>Demo-Daten erstellen</h2>
+
+        <p>
+            Erstellt einen vollständigen Testdatenbestand mit
+            Kategorien, Geräten, verschiedenen Status und
+            Wartungseinträgen.
+        </p>
+
+
+        {% if (
+            statistics.categories == 0
+            and statistics.devices == 0
+            and statistics.maintenance == 0
+        ) %}
+
+            <form
+                method="POST"
+                action="{{ url_for('system.seed') }}"
+            >
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Demo-Daten erstellen
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <div class="system-info">
+                Die Datenbank enthält bereits Daten.
+                Für einen neuen Demo-Datensatz zuerst zurücksetzen.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="panel system-card system-card-danger">
+
+        <div class="system-card-icon danger">
+            !
+        </div>
+
+        <h2>Daten zurücksetzen</h2>
+
+        <p>
+            Löscht alle Geräte, Kategorien und Wartungen.
+            Benutzerkonten bleiben erhalten.
+        </p>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('system.reset') }}"
+            class="reset-form"
+        >
+
+            <div class="form-group">
+
+                <label for="confirmation">
+                    Zur Bestätigung RESET eingeben
+                </label>
+
+                <input
+                    id="confirmation"
+                    name="confirmation"
+                    type="text"
+                    placeholder="RESET"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="button button-danger"
+                onclick="return confirm(
+                    'Alle Geräte, Kategorien und Wartungen wirklich löschen?'
+                );"
+            >
+                Daten zurücksetzen
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="panel system-explanation">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>Was wird zurückgesetzt?</h2>
+
+            <p>
+                Der Reset betrifft ausschliesslich die Demo-
+                und Anwendungsdaten.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="reset-overview">
+
+        <div>
+            <span class="reset-indicator delete"></span>
+
+            <div>
+                <strong>Geräte</strong>
+                <p>Werden vollständig gelöscht.</p>
+            </div>
+        </div>
+
+
+        <div>
+            <span class="reset-indicator delete"></span>
+
+            <div>
+                <strong>Wartungen</strong>
+                <p>Werden vollständig gelöscht.</p>
+            </div>
+        </div>
+
+
+        <div>
+            <span class="reset-indicator delete"></span>
+
+            <div>
+                <strong>Kategorien</strong>
+                <p>Werden vollständig gelöscht.</p>
+            </div>
+        </div>
+
+
+        <div>
+            <span class="reset-indicator keep"></span>
+
+            <div>
+                <strong>Benutzerkonten</strong>
+                <p>Bleiben bestehen.</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

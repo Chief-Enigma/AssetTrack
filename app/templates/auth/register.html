@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+Registrieren | AssetTrack
+{% endblock %}
+
+{% block auth_content %}
+
+<div class="auth-card">
+
+    <div class="auth-brand">
+
+        <div class="brand-mark large">
+            A
+        </div>
+
+        <div>
+            <div class="auth-brand-name">
+                AssetTrack
+            </div>
+
+            <div class="auth-brand-subtitle">
+                Asset Management by NovaForge
+            </div>
+        </div>
+
+    </div>
+
+    <div class="auth-heading">
+
+        <h1>Account erstellen</h1>
+
+        <p>
+            Erstelle deinen persönlichen AssetTrack-Account.
+        </p>
+
+    </div>
+
+    <form
+        method="POST"
+        class="form"
+    >
+
+        <div class="form-group">
+
+            <label for="username">
+                Benutzername
+            </label>
+
+            <input
+                id="username"
+                name="username"
+                type="text"
+                value="{{ request.form.get('username', '') }}"
+                placeholder="Benutzername"
+                autocomplete="username"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="email">
+                E-Mail
+            </label>
+
+            <input
+                id="email"
+                name="email"
+                type="email"
+                value="{{ request.form.get('email', '') }}"
+                placeholder="name@example.com"
+                autocomplete="email"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="password">
+                Passwort
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Mindestens 8 Zeichen"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="password_confirm">
+                Passwort bestätigen
+            </label>
+
+            <input
+                id="password_confirm"
+                name="password_confirm"
+                type="password"
+                placeholder="Passwort wiederholen"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="registration_code">
+                Registrierungscode
+            </label>
+
+            <input
+                id="registration_code"
+                name="registration_code"
+                type="password"
+                placeholder="Registrierungscode"
+                autocomplete="off"
+                required
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="button button-primary button-full"
+        >
+            Account erstellen
+        </button>
+
+    </form>
+
+    <div class="auth-footer">
+
+        Bereits registriert?
+
+        <a href="{{ url_for('auth.login') }}">
+            Zum Login
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

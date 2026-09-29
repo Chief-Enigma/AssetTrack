@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Dashboard</h1>
+
+        <p>
+            Übersicht deiner Geräte und Wartungen.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('devices.create') }}"
+        class="button button-primary"
+    >
+        + Gerät hinzufügen
+    </a>
+
+</div>
+
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Geräte gesamt
+        </div>
+
+        <div class="stat-value">
+            {{ total_devices }}
+        </div>
+
+        <div class="stat-description">
+            Erfasste Geräte
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Verfügbar
+        </div>
+
+        <div class="stat-value">
+            {{ available_devices }}
+        </div>
+
+        <div class="stat-description">
+            Einsatzbereit
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Wartung
+        </div>
+
+        <div class="stat-value">
+            {{ maintenance_devices }}
+        </div>
+
+        <div class="stat-description">
+            Aktuell in Wartung
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Defekt
+        </div>
+
+        <div class="stat-value">
+            {{ defective_devices }}
+        </div>
+
+        <div class="stat-description">
+            Nicht einsatzbereit
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>Letzte Wartungen</h2>
+
+            <p>
+                Die zuletzt erfassten Wartungseinträge.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if recent_maintenance %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Datum</th>
+                        <th>Beschreibung</th>
+                        <th>Kosten</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for maintenance in recent_maintenance %}
+
+                        <tr>
+
+                            <td>
+                                {{ maintenance.device.name }}
+                            </td>
+
+                            <td>
+                                {{ maintenance.maintenance_date.strftime('%d.%m.%Y') }}
+                            </td>
+
+                            <td>
+                                {{ maintenance.description }}
+                            </td>
+
+                            <td>
+                                CHF {{ "%.2f"|format(maintenance.cost) }}
+                            </td>
+
+                            <td>
+
+                                {% if maintenance.completed %}
+
+                                    <span class="badge badge-success">
+                                        Abgeschlossen
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+                                        Offen
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ⚙
+            </div>
+
+            <h3>Noch keine Wartungen</h3>
+
+            <p>
+                Sobald Wartungen erfasst wurden,
+                erscheinen sie hier.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

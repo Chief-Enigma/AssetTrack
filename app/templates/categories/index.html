@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}
+Kategorien | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>Kategorien</h1>
+
+        <p>
+            Kategorien zur Strukturierung deiner Geräte.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="category-layout">
+
+    <div class="form-panel">
+
+        <div class="form-section-heading">
+
+            <h2>Neue Kategorie</h2>
+
+            <p>
+                Erstelle eine neue Gerätekategorie.
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            class="form"
+        >
+
+            <div class="form-group">
+
+                <label for="name">
+                    Kategoriename
+                </label>
+
+                <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="z. B. Notebook"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Kategorie erstellen
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <h2>Vorhandene Kategorien</h2>
+
+                <p>
+                    {{ categories|length }} Kategorien erfasst.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if categories %}
+
+            <div class="category-list">
+
+                {% for category in categories %}
+
+                    <div class="category-item">
+
+                        <div>
+
+                            <strong>
+                                {{ category.name }}
+                            </strong>
+
+                            <span>
+                                {{ category.devices|length }}
+                                Gerät{% if category.devices|length != 1 %}e{% endif %}
+                            </span>
+
+                        </div>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('categories.delete', category_id=category.id) }}"
+                            onsubmit="return confirm('Kategorie wirklich löschen?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="text-danger-button"
+                            >
+                                Löschen
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <h3>Noch keine Kategorien</h3>
+
+                <p>
+                    Erstelle links deine erste Kategorie.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

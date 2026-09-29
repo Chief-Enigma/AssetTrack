@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login | AssetTrack
+{% endblock %}
+
+{% block auth_content %}
+
+<div class="auth-card">
+
+    <div class="auth-brand">
+
+        <div class="brand-mark large">
+            A
+        </div>
+
+        <div>
+            <div class="auth-brand-name">
+                AssetTrack
+            </div>
+
+            <div class="auth-brand-subtitle">
+                Asset Management by NovaForge
+            </div>
+        </div>
+
+    </div>
+
+    <div class="auth-heading">
+        <h1>Willkommen zurück</h1>
+        <p>Melde dich an, um deine Geräte zu verwalten.</p>
+    </div>
+
+    <form
+        method="POST"
+        class="form"
+    >
+
+        <div class="form-group">
+
+            <label for="username">
+                Benutzername
+            </label>
+
+            <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Benutzername"
+                autocomplete="username"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="password">
+                Passwort
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Passwort"
+                autocomplete="current-password"
+                required
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="button button-primary button-full"
+        >
+            Anmelden
+        </button>
+
+    </form>
+
+    <div class="auth-footer">
+
+        Noch keinen Account?
+
+        <a href="{{ url_for('auth.register') }}">
+            Jetzt registrieren
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

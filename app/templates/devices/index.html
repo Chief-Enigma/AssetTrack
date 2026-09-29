@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}
+Geräte | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Geräte</h1>
+
+        <p>
+            Verwalte alle erfassten Assets und deren aktuellen Status.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('devices.create') }}"
+        class="button button-primary"
+    >
+        + Gerät hinzufügen
+    </a>
+
+</div>
+
+
+<div class="panel filter-panel">
+
+    <form
+        method="GET"
+        class="filter-form"
+    >
+
+        <div class="filter-search">
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="Name, Seriennummer oder Standort suchen..."
+            >
+
+        </div>
+
+
+        <select name="status">
+
+            <option value="">
+                Alle Status
+            </option>
+
+            <option
+                value="available"
+                {% if selected_status == "available" %}selected{% endif %}
+            >
+                Verfügbar
+            </option>
+
+            <option
+                value="in_use"
+                {% if selected_status == "in_use" %}selected{% endif %}
+            >
+                In Benutzung
+            </option>
+
+            <option
+                value="maintenance"
+                {% if selected_status == "maintenance" %}selected{% endif %}
+            >
+                Wartung
+            </option>
+
+            <option
+                value="defective"
+                {% if selected_status == "defective" %}selected{% endif %}
+            >
+                Defekt
+            </option>
+
+        </select>
+
+
+        <select name="category">
+
+            <option value="">
+                Alle Kategorien
+            </option>
+
+            {% for category in categories %}
+
+                <option
+                    value="{{ category.id }}"
+                    {% if selected_category == category.id|string %}selected{% endif %}
+                >
+                    {{ category.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <button
+            type="submit"
+            class="button button-secondary"
+        >
+            Filtern
+        </button>
+
+
+        <a
+            href="{{ url_for('devices.index') }}"
+            class="button button-ghost"
+        >
+            Zurücksetzen
+        </a>
+
+    </form>
+
+</div>
+
+
+<div class="panel">
+
+    {% if devices %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Seriennummer</th>
+                        <th>Kategorie</th>
+                        <th>Standort</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for device in devices %}
+
+                        <tr>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for('devices.detail', device_id=device.id) }}"
+                                    class="table-primary-link"
+                                >
+                                    {{ device.name }}
+                                </a>
+
+                            </td>
+
+                            <td class="table-muted">
+                                {{ device.serial_number }}
+                            </td>
+
+                            <td>
+                                {{ device.category.name }}
+                            </td>
+
+                            <td>
+                                {{ device.location }}
+                            </td>
+
+                            <td>
+
+                                {% if device.status == "available" %}
+
+                                    <span class="badge badge-success">
+                                        Verfügbar
+                                    </span>
+
+                                {% elif device.status == "in_use" %}
+
+                                    <span class="badge badge-info">
+                                        In Benutzung
+                                    </span>
+
+                                {% elif device.status == "maintenance" %}
+
+                                    <span class="badge badge-warning">
+                                        Wartung
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-danger">
+                                        Defekt
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="table-action">
+
+                                <a
+                                    href="{{ url_for('devices.detail', device_id=device.id) }}"
+                                    class="table-link"
+                                >
+                                    Öffnen →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ▣
+            </div>
+
+            <h3>Keine Geräte gefunden</h3>
+
+            <p>
+                Erfasse ein neues Gerät oder passe deine Filter an.
+            </p>
+
+            <a
+                href="{{ url_for('devices.create') }}"
+                class="button button-primary empty-button"
+            >
+                Gerät hinzufügen
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Wartungen | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Wartungen</h1>
+
+        <p>
+            Übersicht aller offenen und abgeschlossenen Wartungen.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="maintenance-filter">
+
+    <a
+        href="{{ url_for('maintenance.index') }}"
+        class="filter-tab {% if not selected_status %}active{% endif %}"
+    >
+        Alle
+    </a>
+
+    <a
+        href="{{ url_for('maintenance.index', status='open') }}"
+        class="filter-tab {% if selected_status == 'open' %}active{% endif %}"
+    >
+        Offen
+    </a>
+
+    <a
+        href="{{ url_for('maintenance.index', status='completed') }}"
+        class="filter-tab {% if selected_status == 'completed' %}active{% endif %}"
+    >
+        Abgeschlossen
+    </a>
+
+</div>
+
+
+<div class="panel">
+
+    {% if maintenance_entries %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Gerät</th>
+                        <th>Datum</th>
+                        <th>Beschreibung</th>
+                        <th>Kosten</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for entry in maintenance_entries %}
+
+                        <tr>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for('devices.detail', device_id=entry.device.id) }}"
+                                    class="table-primary-link"
+                                >
+                                    {{ entry.device.name }}
+                                </a>
+
+                                <div class="table-subtext">
+                                    {{ entry.device.serial_number }}
+                                </div>
+
+                            </td>
+
+                            <td>
+                                {{ entry.maintenance_date.strftime('%d.%m.%Y') }}
+                            </td>
+
+                            <td>
+                                {{ entry.description }}
+                            </td>
+
+                            <td>
+                                CHF {{ "%.2f"|format(entry.cost) }}
+                            </td>
+
+                            <td>
+
+                                {% if entry.completed %}
+
+                                    <span class="badge badge-success">
+                                        Abgeschlossen
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+                                        Offen
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="table-action">
+
+                                <a
+                                    href="{{ url_for('devices.detail', device_id=entry.device.id) }}"
+                                    class="table-link"
+                                >
+                                    Gerät öffnen →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ⚙
+            </div>
+
+            <h3>Keine Wartungen gefunden</h3>
+
+            <p>
+                Für den ausgewählten Filter sind keine Wartungen vorhanden.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

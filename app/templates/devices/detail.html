@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ device.name }} | AssetTrack
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <a
+            href="{{ url_for('devices.index') }}"
+            class="back-link"
+        >
+            ← Alle Geräte
+        </a>
+
+        <div class="detail-title">
+
+            <h1>{{ device.name }}</h1>
+
+            {% if device.status == "available" %}
+
+                <span class="badge badge-success">
+                    Verfügbar
+                </span>
+
+            {% elif device.status == "in_use" %}
+
+                <span class="badge badge-info">
+                    In Benutzung
+                </span>
+
+            {% elif device.status == "maintenance" %}
+
+                <span class="badge badge-warning">
+                    Wartung
+                </span>
+
+            {% else %}
+
+                <span class="badge badge-danger">
+                    Defekt
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        <p>
+            {{ device.serial_number }}
+        </p>
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <a
+            href="{{ url_for('maintenance.create', device_id=device.id) }}"
+            class="button button-primary"
+        >
+            + Wartung erfassen
+        </a>
+
+        <a
+            href="{{ url_for('devices.edit', device_id=device.id) }}"
+            class="button button-secondary"
+        >
+            Bearbeiten
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="detail-grid">
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <h2>Geräteinformationen</h2>
+                <p>Stammdaten des Assets.</p>
+            </div>
+
+        </div>
+
+
+        <div class="detail-list">
+
+            <div class="detail-row">
+                <span>Name</span>
+                <strong>{{ device.name }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Seriennummer</span>
+                <strong>{{ device.serial_number }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Kategorie</span>
+                <strong>{{ device.category.name }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Standort</span>
+                <strong>{{ device.location }}</strong>
+            </div>
+
+            <div class="detail-row">
+
+                <span>Kaufdatum</span>
+
+                <strong>
+                    {% if device.purchase_date %}
+                        {{ device.purchase_date.strftime('%d.%m.%Y') }}
+                    {% else %}
+                        –
+                    {% endif %}
+                </strong>
+
+            </div>
+
+            <div class="detail-row">
+                <span>Erfasst von</span>
+                <strong>{{ device.creator.username }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Erfasst am</span>
+                <strong>
+                    {{ device.created_at.strftime('%d.%m.%Y %H:%M') }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header maintenance-panel-header">
+
+            <div>
+                <h2>Wartungshistorie</h2>
+
+                <p>
+                    Alle Wartungen dieses Geräts.
+                </p>
+            </div>
+
+            <a
+                href="{{ url_for('maintenance.create', device_id=device.id) }}"
+                class="table-link"
+            >
+                + Neue Wartung
+            </a>
+
+        </div>
+
+
+        {% if device.maintenance_entries %}
+
+            <div class="maintenance-history">
+
+                {% for entry in device.maintenance_entries|sort(attribute='maintenance_date', reverse=true) %}
+
+                    <div class="maintenance-history-item">
+
+                        <div class="maintenance-history-top">
+
+                            <div>
+
+                                <strong>
+                                    {{ entry.maintenance_date.strftime('%d.%m.%Y') }}
+                                </strong>
+
+                                {% if entry.completed %}
+
+                                    <span class="badge badge-success">
+                                        Abgeschlossen
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+                                        Offen
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <strong class="maintenance-cost">
+                                CHF {{ "%.2f"|format(entry.cost) }}
+                            </strong>
+
+                        </div>
+
+
+                        <p class="maintenance-description">
+                            {{ entry.description }}
+                        </p>
+
+
+                        <div class="maintenance-actions">
+
+                            {% if not entry.completed %}
+
+                                <a
+                                    href="{{ url_for('maintenance.edit', maintenance_id=entry.id) }}"
+                                    class="small-action-link"
+                                >
+                                    Bearbeiten
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('maintenance.complete', maintenance_id=entry.id) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="small-action-button success"
+                                    >
+                                        Abschliessen
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('maintenance.delete', maintenance_id=entry.id) }}"
+                                onsubmit="return confirm('Wartungseintrag wirklich löschen?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="small-action-button danger"
+                                >
+                                    Löschen
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state compact">
+
+                <div class="empty-icon">
+                    ⚙
+                </div>
+
+                <h3>Keine Wartungen</h3>
+
+                <p>
+                    Für dieses Gerät wurden noch keine Wartungen erfasst.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="danger-zone">
+
+    <div>
+
+        <strong>Gerät löschen</strong>
+
+        <p>
+            Das Gerät und alle zugehörigen Wartungseinträge
+            werden dauerhaft gelöscht.
+        </p>
+
+    </div>
+
+
+    <form
+        method="POST"
+        action="{{ url_for('devices.delete', device_id=device.id) }}"
+        onsubmit="return confirm('Gerät wirklich dauerhaft löschen?');"
+    >
+
+        <button
+            type="submit"
+            class="button button-danger"
+        >
+            Gerät löschen
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% if maintenance_entry %}
+    {% set page_title = "Wartung bearbeiten" %}
+{% else %}
+    {% set page_title = "Wartung erfassen" %}
+{% endif %}
+
+
+{% block title %}
+{{ page_title }} | AssetTrack
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <a
+            href="{{ url_for('devices.detail', device_id=device.id) }}"
+            class="back-link"
+        >
+            ← {{ device.name }}
+        </a>
+
+        <h1>{{ page_title }}</h1>
+
+        <p>
+            Wartung für {{ device.name }} – {{ device.serial_number }}
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="form-panel">
+
+    <form
+        method="POST"
+        class="device-form"
+    >
+
+        <div class="form-section">
+
+            <div class="form-section-heading">
+
+                <h2>Wartungsinformationen</h2>
+
+                <p>
+                    Erfasse Datum, Beschreibung und Kosten der Wartung.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label for="maintenance_date">
+                        Wartungsdatum *
+                    </label>
+
+                    <input
+                        id="maintenance_date"
+                        name="maintenance_date"
+                        type="date"
+                        value="{{ request.form.get(
+                            'maintenance_date',
+                            maintenance_entry.maintenance_date.isoformat()
+                            if maintenance_entry
+                            else ''
+                        ) }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="cost">
+                        Kosten in CHF
+                    </label>
+
+                    <input
+                        id="cost"
+                        name="cost"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="{{ request.form.get(
+                            'cost',
+                            maintenance_entry.cost
+                            if maintenance_entry
+                            else '0.00'
+                        ) }}"
+                        placeholder="0.00"
+                    >
+
+                </div>
+
+
+                <div class="form-group form-group-full">
+
+                    <label for="description">
+                        Beschreibung *
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        placeholder="Was wurde am Gerät gemacht?"
+                        required
+                    >{{ request.form.get(
+                        'description',
+                        maintenance_entry.description
+                        if maintenance_entry
+                        else ''
+                    ) }}</textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('devices.detail', device_id=device.id) }}"
+                class="button button-ghost"
+            >
+                Abbrechen
+            </a>
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                {% if maintenance_entry %}
+                    Änderungen speichern
+                {% else %}
+                    Wartung eröffnen
+                {% endif %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
